@@ -1,0 +1,42 @@
+- name: Find AMI for Linux Host
+  amazon.aws.ec2_ami_info:
+    region: "{{ aws_region }}"
+    owners: 309956199498
+    filters:
+      name: 'RHEL-9*HVM-*Hourly*'
+      architecture: x86_64
+  register: amis
+
+- name: save ami for rhel node
+  set_fact:
+    node_ami_rhel: >
+      {{ amis.images | selectattr('name', 'defined') | sort(attribute='name') | last }}
+
+- name: Provision AAP EC2 Instances 
+  amazon.aws.ec2_instance: 
+    profile: "{{ aws_profile | default('') }}"
+    state: started
+    name: "{{ item.name }}"
+    security_group: "{{ sec_info.security_groups[0].group_name }}"
+    vpc_subnet_id: "{{ vpc_subnet_info.subnets[0].subnet_id }}"
+    image_id: "{{ node_ami_rhel.image_id }}"
+    instance_type: "{{ item.instance_type | default(aws_instance_type) }}"
+    key_name: "ansible-demo-key"
+    volumes:
+      - device_name: /dev/sda1 
+        ebs:
+          volume_size: 40 
+          delete_on_termination: true 
+    tags: 
+      group_name: "{{ item.group }}"
+      short_desc: "{{ item.short_desc }}"
+      demo: Ansible 
+    wait: yes
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+  register: ec2_loop 
+  async: 3000
+  poll: 0
+  loop: "{{ aap_infrastructure_aws.instances }}"
+

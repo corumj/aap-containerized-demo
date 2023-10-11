@@ -1,0 +1,70 @@
+---
+- name: create a VPC 
+  amazon.aws.ec2_vpc_net:
+    profile: "{{ aws_profile }}"
+    state: present
+    name: "ansible-vpc"
+    cidr_block: 10.0.0.0/16
+    tenancy: default
+    tags:
+      demo: Ansible 
+  register: demo_vpc
+
+- name: Create Internet Gateway for VPC  
+  community.aws.ec2_vpc_igw:
+    profile: "{{ aws_profile }}"
+    state: present
+    vpc_id: "{{ demo_vpc.vpc.id }}"
+    tags:
+      Name: "ansible-vpc-igw"
+      demo: Ansible 
+  register: gateway
+
+- name: Create security group internal
+  amazon.aws.ec2_group: 
+    profile: "{{ aws_profile }}"
+    state: present
+    name: "ansible-sec-group"
+    description: Inbound WinRM and RDP, http for demo servers and internal AD ports 
+    rules: "{{ aap_infrastructure_aws.security_group_rules }}"
+    rules_egress:
+      - proto: -1 
+        cidr_ip: 0.0.0.0/0
+    vpc_id: "{{ demo_vpc.vpc.id }}"
+    tags:
+      Name: "ansible-sec-group"
+      demo: Ansible 
+  register: demo_sec
+
+- name: Create a subnet on the VPC for our apps
+  amazon.aws.ec2_vpc_subnet:
+    profile: "{{ aws_profile }}"
+    state: present
+    vpc_id: "{{ demo_vpc.vpc.id }}"
+    cidr: 10.0.0.0/16
+    map_public: yes
+    tags:
+      Name: "ansible-subnet"
+      demo: Ansible 
+  register: demo_subnet
+
+- name: Create a subnet route table 
+  community.aws.ec2_vpc_route_table:
+    profile: "{{ aws_profile }}"
+    state: present 
+    vpc_id: "{{ demo_vpc.vpc.id }}"
+    subnets:
+      - "{{ demo_subnet.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0 
+        gateway_id: "{{ gateway.gateway_id }}"
+    tags: 
+      Name: "ansible-vpc-rtbl"
+      demo: Ansible 
+    
+- name: Generate AWS Keypair 
+  amazon.aws.ec2_key: 
+    profile: "{{ aws_profile }}"
+    name: "ansible-demo-key"
+    key_material: "{{ public_key }}"
+    state: present

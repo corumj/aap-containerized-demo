@@ -1,0 +1,12 @@
+---
+- name: Retrieve list of hosted zones in Route53 
+  amazon.aws.route53_info:
+    query: hosted_zone
+  register: route53_info
+
+- name: Setup DNS variables 
+  ansible.builtin.set_fact:
+    top_level_domain: '{{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}'
+    controller_dns: controller.{{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}
+    hub_dns: hub.{{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}
+    eda_dns: eda.{{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}

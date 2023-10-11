@@ -1,0 +1,200 @@
+---
+- name: Setup Containerized AAP Infrastructure
+  hosts: localhost
+  connection: local 
+  gather_facts: no 
+
+  vars_files:
+    - config.yml 
+
+  tasks:
+    - name: Verify AWS Credentials 
+      amazon.aws.aws_caller_info:
+      register: caller_info
+
+    - debug: 
+        msg: "Hello, {{ caller_info.account_alias }}"
+
+    - name: Setup AWS Supporting Infrastructure (VPC, Subnet, Security Group, etc.)
+      ansible.builtin.include_role:
+        name: aws-infra-setup 
+
+    - name: Get AWS infra IDs from infra we just created 
+      include_role:
+        name: aws-infra-info
+    
+    - name: Provision Instances for AAP 
+      ansible.builtin.include_role:
+        name: aap_instances
+
+    - meta: refresh_inventory
+    
+    - name: setup dns info  
+      ansible.builtin.include_role:
+        name: dns 
+
+    - debug: 
+        msg: 'Your top level domain is: {{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}'
+
+    - name: prepare local directory for certificates 
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/generated_files"
+        state: directory 
+      delegate_to: localhost 
+
+    - name: Prepare certificate challenges for Controller, EDA, and Hub 
+      include_role:
+        name: certificates
+        tasks_from: prepare-challenge.yml 
+
+    - name: Prepare route53 DNS for challenge
+      include_role:
+        name: certificates
+        tasks_from: set-dns-challenge.yml
+
+    - name: Validate DNS challenges 
+      include_role: 
+        name: certificates
+        tasks_from: validate-challenge.yml
+
+    - name: Setup AWS Route 53 for TLS 
+      include_role:
+        name: certificates 
+        tasks_from: set-dns.yml 
+
+- name: Prepare instances for AAP 
+  hosts: all 
+  gather_facts: no 
+
+  tasks: 
+    - name: wait for systems to become reachable 
+      ansible.builtin.wait_for_connection:
+        timeout: 900
+
+    - name: fetch dns info  
+      ansible.builtin.include_role:
+        name: dns 
+        apply: 
+          delegate_to: localhost 
+
+    - name: Register servers to RHSM 
+      include_role:
+        name: rhsm 
+        tasks_from: register.yml
+
+    - name: Make sure repositories are allowed to be managed from subscription-manager 
+      shell: subscription-manager config --rhsm.manage_repos=1 
+      become: true
+
+    - name: Run system updates 
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest 
+      become: true
+
+    - name: Set hostnames 
+      ansible.builtin.hostname:
+        name: '{{ group_names[1] }}.{{ route53_info.hosted_zones[0].name | regex_search(".*(?=\.)") }}'
+      become: true 
+
+    - name: Create cert and key directory 
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory 
+      loop: 
+        - "~/aap"
+        - "~/aap/generated_files"
+
+    - name: Copy certificates and keys 
+      ansible.builtin.copy: 
+        src: "{{ playbook_dir }}/generated_files/" 
+        dest: ~/aap/generated_files   
+
+- name: Generate Controller SSH Key pair and install ansible-core 
+  hosts: controller 
+  gather_facts: no 
+  tasks: 
+    - name: Generate an OpenSSH keypair
+      community.crypto.openssh_keypair:
+        path: /home/{{ ansible_user }}/.ssh/controller_id_rsa
+
+    - name: Fetch the controller SSH key 
+      ansible.builtin.fetch:
+        src: /home/{{ ansible_user }}/.ssh/controller_id_rsa.pub
+        dest: "{{ playbook_dir }}/generated_files/"
+        flat: yes
+
+    - name: Install ansible-core 
+      ansible.builtin.dnf:
+        name: 
+          - ansible-core 
+          - wget 
+          - git 
+          - rsync
+        state: present 
+      become: yes 
+
+- name: Add Controller ssh key to authorized keys for AAP hosts 
+  hosts: aws_ec2:!controller
+  gather_facts: no 
+  
+  tasks:
+    - name: Set authorized key taken from file
+      ansible.posix.authorized_key:
+        user: ec2-user
+        state: present
+        key: "{{ lookup('file', '{{ playbook_dir }}/generated_files/controller_id_rsa.pub') }}"
+
+- name: Install Automation Controller, EDA Controller, and Automation Hub 
+  hosts: controller 
+  vars_files:
+    - config.yml 
+
+  tasks:
+
+    - name: fetch dns info  
+      ansible.builtin.include_role:
+        name: dns 
+        apply: 
+          delegate_to: localhost 
+
+    - name: Verify directory for AAP installer exists 
+      ansible.builtin.file: 
+        path: ~/aap
+        state: directory 
+
+    - name: Copy installer 
+      ansible.builtin.copy: 
+        src: "{{ installer_tar_gz }}"
+        dest: ~/aap/aap.tar.gz 
+
+    - name: Copy ansible.cfg
+      ansible.builtin.copy: 
+        src: ansible.cfg 
+        dest: ~/aap/ansible.cfg    
+  
+    - name: Copy manifest.zip
+      ansible.builtin.copy: 
+        src: manifest.zip 
+        dest: ~/aap/manifest.zip
+
+    - name: Extract tar.gz 
+      ansible.builtin.unarchive: 
+        src: ~/aap/aap.tar.gz 
+        dest: ~/aap 
+        extra_opts: ['--strip-components=1', '--show-stored-names']
+        remote_src: yes 
+
+    - name: template inventory file for AAP install 
+      ansible.builtin.template:
+        src: "inventory.j2"
+        dest: "/home/{{ ansible_user }}/aap/inventory"
+
+    - name: run the Automation Controller installer
+      shell: "ansible-playbook -i inventory ansible.containerized_installer.install --key-file '~/.ssh/controller_id_rsa'"
+      args:
+        chdir: "/home/ec2-user/aap"
+      async: 4800
+      poll: 60
+      environment:
+        ANSIBLE_COLLECTIONS_PATH: /home/{{ ansible_user }}/aap/collections

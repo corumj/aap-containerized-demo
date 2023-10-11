@@ -1,0 +1,6 @@
+---    
+- name: Unsubscribe
+  redhat_subscription:
+    state: absent
+    username: "{{ redhat_username }}"
+    password: "{{ redhat_password }}"
