@@ -1,0 +1,4 @@
+--- 
+ansible_user: ec2-user
+scm_branch: main
+hub_offline_token: "{{ lookup('ini', 'token section=galaxy_server.automation_hub file=ansible.cfg') }}"
