@@ -119,6 +119,7 @@
       ansible.builtin.file:
         path: "/etc/yum.repos.d/{{ item }}"
         state: absent 
+      become: yes
       loop:
         - "redhat-rhui-client-config.repo"
         - "redhat-rhui.repo"
@@ -146,6 +147,11 @@
           - rsync
         state: present 
       become: yes 
+
+    - name: Copy config for post install 
+      ansible.builtin.copy: 
+        src: files/config
+        dest: /home/{{ ansible_user }}/aap/
 
 - name: Add Controller ssh key to authorized keys for AAP hosts 
   hosts: aws_ec2:!controller
@@ -186,11 +192,10 @@
         src: ansible.cfg 
         dest: ~/aap/ansible.cfg    
 
-# Disabling this until I add the infra.controller_config bits   
-    # - name: Copy manifest.zip
-    #   ansible.builtin.copy: 
-    #     src: manifest.zip 
-    #     dest: ~/aap/manifest.zip
+    - name: Copy manifest.zip
+      ansible.builtin.copy: 
+        src: manifest.zip 
+        dest: ~/aap/manifest.zip
 
     - name: Extract tar.gz 
       ansible.builtin.unarchive: 
@@ -212,3 +217,10 @@
       poll: 60
       environment:
         ANSIBLE_COLLECTIONS_PATH: /home/{{ ansible_user }}/aap/collections
+
+    - name: Access information
+      ansible.builtin.debug:
+        msg: 
+          - "Automation Controller: https://{{ controller_dns }} "
+          - "EDA Controller: https://{{ eda_dns }} "
+          - "Automation Hub: https:/{{ hub_dns }} "
