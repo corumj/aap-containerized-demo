@@ -1,6 +1,9 @@
 # aap-containerized-demo
 Repo to experiment with Containerized Ansible Automation Platform
 
+I do this from my Mac terminal, currently runing ansible-core 2.14.1 
+Download the installer and update vars/config.yml to point at it.  I just 
+dumped the installer in my repo directory (it's in the .gitignore).  
 
 You'll need an extra_vars file like this:
 
@@ -26,3 +29,7 @@ To run the setup
 
 To run the teardown
 `ansible-playbook -i aws_ec2.yml -e @extra_vars.yml teardown.yml`
+
+# To Do 
+- Create an update security rules playbook with the role
+- Create infra.controller_configuration config files so we can use the controller postinstall options.
