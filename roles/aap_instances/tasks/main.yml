@@ -40,3 +40,12 @@
   poll: 0
   loop: "{{ aap_infrastructure_aws.instances }}"
 
+- name: Wait for provisioning to complete 
+  ansible.builtin.async_status:
+    jid: "{{ item.ansible_job_id }}"
+    mode: status 
+  retries: 150
+  delay: 20 
+  loop: "{{ ec2_loop.results }}"
+  register: ec2_loop_jobs 
+  until: ec2_loop_jobs.finished 
