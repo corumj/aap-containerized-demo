@@ -1,0 +1,7 @@
+---
+controller_organizations:
+- name: Default
+  description: This is the Default Group
+  galaxy_credentials:
+    - "Automation Hub" 
+    - "Ansible Galaxy"

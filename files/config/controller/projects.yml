@@ -1,0 +1,13 @@
+---
+controller_projects:
+  - name: Demo Repo
+    description: Demo repository
+    organization: Default
+    scm_type: git
+    scm_url: https://github.com/corumj/aap-demo.git
+    scm_branch: main
+    scm_clean: true
+    scm_update_on_launch: false
+    scm_credential: ""
+    update_project: true
+    wait: true
