@@ -110,6 +110,19 @@
         src: "{{ playbook_dir }}/generated_files/" 
         dest: ~/aap/generated_files   
 
+# Per install guide, only rhel-9-for-x86_64-appstream-rpms and
+# rhel-9-for-x86_64-baseos-rpms should remain and these AWS
+# instances have the rhui repos enabled by default.
+# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/containerized_ansible_automation_platform_installation_guide/aap-containerized-installation#preparing-the-rhel-host-for-containerized-installation_aap-containerized-installation
+
+    - name: Remove enable repos outside of requirements 
+      ansible.builtin.file:
+        path: "/etc/yum.repos.d/{{ item }}"
+        state: absent 
+      loop:
+        - "redhat-rhui-client-config.repo"
+        - "redhat-rhui.repo"
+
 - name: Generate Controller SSH Key pair and install ansible-core 
   hosts: controller 
   gather_facts: no 
@@ -172,11 +185,12 @@
       ansible.builtin.copy: 
         src: ansible.cfg 
         dest: ~/aap/ansible.cfg    
-  
-    - name: Copy manifest.zip
-      ansible.builtin.copy: 
-        src: manifest.zip 
-        dest: ~/aap/manifest.zip
+
+# Disabling this until I add the infra.controller_config bits   
+    # - name: Copy manifest.zip
+    #   ansible.builtin.copy: 
+    #     src: manifest.zip 
+    #     dest: ~/aap/manifest.zip
 
     - name: Extract tar.gz 
       ansible.builtin.unarchive: 
