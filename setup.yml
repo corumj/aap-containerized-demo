@@ -27,6 +27,8 @@
       ansible.builtin.include_role:
         name: aap_instances
 
+# Now that we have servers provisioned, we need to refresh our inventory
+# so that we have access to the IP addresses to setup DNS
     - meta: refresh_inventory
     
     - name: setup dns info  
@@ -57,7 +59,7 @@
         name: certificates
         tasks_from: validate-challenge.yml
 
-    - name: Setup AWS Route 53 for TLS 
+    - name: Setup dns for Controller, Hub, and EDA Controller
       include_role:
         name: certificates 
         tasks_from: set-dns.yml 
@@ -127,6 +129,10 @@
 - name: Generate Controller SSH Key pair and install ansible-core 
   hosts: controller 
   gather_facts: no 
+
+  vars_files:
+    - config.yml 
+
   tasks: 
     - name: Generate an OpenSSH keypair
       community.crypto.openssh_keypair:
@@ -148,10 +154,27 @@
         state: present 
       become: yes 
 
-    - name: Copy config for post install 
-      ansible.builtin.copy: 
-        src: files/config
-        dest: /home/{{ ansible_user }}/aap/
+# This will setup all the directories and files for the 
+# infra.controller_configuration files.  
+# I've templated one of my values in controller/credentials.yml 
+# so they can pickup the token from my local ansible.cfg, so 
+# this copy process fills out any templates that are in the 
+# templates/config directory
+    - name: Copy infra.controller_configuration config files for post install 
+      block:
+        - name: Ensure directory structure exists 
+          ansible.builtin.file:
+            path: '{{ templates_destination }}/{{ item.path }}'
+            state: directory 
+          with_community.general.filetree: '{{ templates_source }}'
+          when: item.state == 'directory'
+
+        - name: Ensure files are populated from templates
+          ansible.builtin.template:
+            src: '{{ item.src }}'
+            dest: '{{ templates_destination }}/{{ item.path }}'
+          with_community.general.filetree: '{{ templates_source }}'
+          when: item.state == 'file'
 
 - name: Add Controller ssh key to authorized keys for AAP hosts 
   hosts: aws_ec2:!controller
@@ -218,7 +241,7 @@
       environment:
         ANSIBLE_COLLECTIONS_PATH: /home/{{ ansible_user }}/aap/collections
 
-    - name: Access information
+    - name: Print access information
       ansible.builtin.debug:
         msg: 
           - "Automation Controller: https://{{ controller_dns }} "

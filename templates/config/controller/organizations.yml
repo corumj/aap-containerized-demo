@@ -1,6 +1,6 @@
 ---
 controller_organizations:
-- name: Default
+- name: Demo
   description: This is the Default Group
   galaxy_credentials:
     - "Automation Hub" 

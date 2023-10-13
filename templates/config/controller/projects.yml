@@ -2,7 +2,7 @@
 controller_projects:
   - name: Demo Repo
     description: Demo repository
-    organization: Default
+    organization: Demo
     scm_type: git
     scm_url: https://github.com/corumj/aap-demo.git
     scm_branch: main

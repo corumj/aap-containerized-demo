@@ -1,6 +1,7 @@
 ---
 # Path to the containerized setup file
-installer_tar_gz: "ansible-automation-platform-containerized-setup-2.4-1.tar.gz"
+installer_directory: ansible-automation-platform-containerized-setup-2.4-1
+installer_tar_gz: "{{ installer_directory }}.tar.gz"
 
 # change these lookups to whichever SSH key you want to use to connect to the instances from your control host
 public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"  
@@ -80,3 +81,11 @@ aap_infrastructure_aws:
         - 464 # Kerberos Authentication
         - 1024-65535 # Ephemeral RPC ports
       cidr_ip: 10.0.0.0/16
+
+# Grab the offline token from the ansible.cfg you should have setup as part of the README.md (maybe, if 
+# I remembered to put that in there)
+#hub_offline_token: "{{ lookup('ini', 'token section=galaxy_server.automation_hub file=ansible.cfg') }}"
+
+templates_destination: /home/ec2-user/aap/config
+templates_source: templates/config
+
