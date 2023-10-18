@@ -1,0 +1,34 @@
+- name: Start AAP Servers 
+  hosts: localhost
+  connection: local 
+  gather_facts: no
+
+  vars_files:
+    - config.yml 
+
+  tasks:
+
+    - name: Start Instances 
+      amazon.aws.ec2_instance:
+        wait: yes
+        region: "{{ aws_region }}"
+        aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+        aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+        state: started
+        filters:
+          instance-state-name: stopped
+
+    - name: wait for systems to become reachable 
+      ansible.builtin.wait_for_connection:
+        timeout: 900
+
+    - meta: refresh_inventory
+
+    - name: setup dns info  
+      ansible.builtin.include_role:
+        name: dns 
+        
+    - name: Update DNS with new IPs 
+      include_role: 
+        name: certificates
+        tasks_from: set-dns.yml

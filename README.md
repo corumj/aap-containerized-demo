@@ -24,8 +24,32 @@ certificate_force: false
 
 and a Red Hat Demo System AWS OpenEnvironment credential setup as a default profile (or update vars/config.yml with your preferred profile name) at `~/.aws/credential`
 
+and also an ansible.cfg file configured for Automation Hub, something like this:
+```ini
+[defaults]
+host_key_checking = False
+# callback_whitelist = profile_tasks
+deprecation_warnings=False
+[galaxy]
+server_list = automation_hub, galaxy 
+
+[galaxy_server.automation_hub]
+url= < Server URL from Automation Hub > Connect to Hub >
+auth_url= < SSO url from Automation Hub as well >
+token=< token  goes here, generated, you guessed it, from Automation Hub >
+
+[galaxy_server.galaxy]
+url=https://galaxy.ansible.com
+```
+
 To run the setup 
 `ansible-playbook -i aws_ec2.yml -e @extra_vars.yml setup.yml `
+
+To shut down AAP so that you can come back tomorrow, run:
+`ansible-playbook -i aws_ec2.yml -e @extra_vars.yml shutdown.yml`
+
+To start up AAP and resume where you left off from yesterday, run:
+`ansible-playbook -i aws_ec2.yml -e @extra_vars.yml startup.yml`
 
 To run the teardown
 `ansible-playbook -i aws_ec2.yml -e @extra_vars.yml teardown.yml`
@@ -33,3 +57,6 @@ To run the teardown
 # To Do 
 - Create an update security rules playbook with the role
 - Create infra.controller_configuration config files so we can use the controller postinstall options.
+- Fully parameterize the remaining config.yml keys with paths
+- clean up with module_defaults
+- See if the dns role can be modified to handle a situation with multiple zones (maybe by looking for the )

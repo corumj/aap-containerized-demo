@@ -1,0 +1,11 @@
+- name: Shutdown AAP infrastructure 
+  hosts: localhost
+  connection: local 
+  gather_facts: no
+
+  tasks:
+    - name: Shut Down All Instances 
+      amazon.aws.ec2_instance:
+        state: stopped
+        filters:
+          instance-state-name: running
