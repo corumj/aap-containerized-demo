@@ -59,8 +59,8 @@ To teardown the instances, run:
 > and you'll get tons of emails from Let's Encrypt about it.
 
 # To Do 
-- Create an update security rules playbook with the role
-- Create infra.controller_configuration config files so we can use the controller postinstall options.
-- Fully parameterize the remaining config.yml keys with paths
-- clean up with module_defaults
-- See if the dns role can be modified to handle a situation with multiple zones (maybe by looking for the )
+- [ ] Create an update security rules playbook with the role
+- [-] Create infra.controller_configuration config files so we can use the controller postinstall options. (in progress)
+- [ ] Fully parameterize the remaining config.yml keys with paths
+- [ ] Clean up with module_defaults
+- [ ] See if the dns role can be modified to handle a situation with multiple zones (maybe by looking for the controller record? )
