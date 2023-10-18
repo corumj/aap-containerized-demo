@@ -1,7 +1,7 @@
 ---
 # Path to the containerized setup file
-installer_directory: ansible-automation-platform-containerized-setup-2.4-1
-installer_tar_gz: "{{ installer_directory }}.tar.gz"
+installer_version: 2.4-1
+installer_file: "{{ playbook_dir }}/ansible-automation-platform-containerized-setup-{{ installer_version }}.tar.gz"
 
 # change these lookups to whichever SSH key you want to use to connect to the instances from your control host
 public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"  
