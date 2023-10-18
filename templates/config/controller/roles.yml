@@ -1,0 +1,28 @@
+---
+controller_roles: 
+  - user: alvaro 
+    target_team: Infrastructure
+    role: member 
+    organizations: 
+      - Demo 
+      - Windows
+
+  - user: gaverel
+    target_team: Infrastructure
+    role: member 
+    organization: Demo
+
+  - user: genly
+    target_team: "Windows Admins"
+    role: member 
+    organization: Windows
+
+  - team: Infrastructure 
+    organizations:  
+      - Demo
+      - Windows 
+    role: admin
+
+  - team: "Windows Admins" 
+    organization: Windows 
+    role: admin

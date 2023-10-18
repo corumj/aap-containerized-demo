@@ -1,0 +1,20 @@
+---
+controller_inventories:
+  - name: Linux Systems
+    organization: Demo
+    description: created by Ansible Playbook - for Linux Systems teams
+
+  - name: Windows Systems
+    organization: Windows
+    description: created by Ansible Playbook - for Windows Systems teams
+
+
+
+
+
+
+  # - name: Test Inventory - Smart
+  #   organization: Default
+  #   description: created by Ansible Playbook
+  #   kind: smart
+  #   host_filter:  "name__icontains=localhost"

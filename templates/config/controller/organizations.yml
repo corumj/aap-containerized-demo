@@ -7,7 +7,7 @@ controller_organizations:
     - "Ansible Galaxy"
 
 - name: Windows
-  description: Demo setup 
+  description: Windows Team 
   galaxy_credentials:
     - "Automation Hub" 
     - "Ansible Galaxy"

@@ -1,0 +1,19 @@
+--- 
+controller_user_accounts:
+  - user: alvaro
+    first_name: Alvaro 
+    last_name: Guillen Martin 
+    email: alvaro.guillen-martin@example.com 
+    organization: Demo 
+
+  - user: gaverel
+    first_name: Gaverel 
+    last_name: Rocannon
+    email: gaverel.rocannon@example.com 
+    organization: Demo 
+
+  - user: genly
+    first_name: Genly 
+    last_name: Ai 
+    email: genly.ai@example.com 
+    organization: Windows

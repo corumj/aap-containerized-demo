@@ -17,9 +17,9 @@ controller_projects:
     organization: Windows
     scm_type: git
     scm_url: https://github.com/corumj/ansible-windows-admin-tasks.git
-    scm_branch: main
+    scm_branch: master
     scm_clean: true
     scm_update_on_launch: false
     scm_credential: ""
     update_project: true
-    wait: true
+    wait: false
