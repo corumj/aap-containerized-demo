@@ -207,7 +207,7 @@
 
     - name: Copy installer 
       ansible.builtin.copy: 
-        src: "{{ installer_tar_gz }}"
+        src: "{{ installer_file }}"
         dest: ~/aap/aap.tar.gz 
 
     - name: Copy ansible.cfg
