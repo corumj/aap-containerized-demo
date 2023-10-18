@@ -5,7 +5,7 @@ I do this from my Mac terminal, currently runing ansible-core 2.14.1
 Download the installer and update vars/config.yml to point at it.  I just 
 dumped the installer in my repo directory (it's in the .gitignore).  
 
-You'll need an extra_vars file like this:
+You'll need an extra_vars.yml file like this:
 
 ```yaml
 ---
@@ -20,6 +20,8 @@ cert_email: < your email >
 
 # Don't set this as true unless something horrible has happened and you think it's cert related
 certificate_force: false 
+
+controller_user_default_password: < default user password for all users >
 ```
 
 and a Red Hat Demo System AWS OpenEnvironment credential setup as a default profile (or update vars/config.yml with your preferred profile name) at `~/.aws/credential`
@@ -64,3 +66,4 @@ To teardown the instances, run:
 - [ ] Fully parameterize the remaining config.yml keys with paths
 - [ ] Clean up with module_defaults
 - [ ] See if the dns role can be modified to handle a situation with multiple zones (maybe by looking for the controller record? )
+- [ ] Move set-dns.yml to the dns role (considering)
