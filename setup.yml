@@ -159,7 +159,7 @@
 # I've templated one of my values in controller/credentials.yml 
 # so they can pickup the token from my local ansible.cfg, so 
 # this copy process fills out any templates that are in the 
-# templates/config directory
+# templates/config directory while it's copying
     - name: Copy infra.controller_configuration config files for post install 
       block:
         - name: Ensure directory structure exists 
