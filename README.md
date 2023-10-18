@@ -34,7 +34,7 @@ deprecation_warnings=False
 server_list = automation_hub, galaxy 
 
 [galaxy_server.automation_hub]
-url= < Server URL from Automation Hub > Connect to Hub >
+url= < Server URL from Automation Hub - Connect to Hub >
 auth_url= < SSO url from Automation Hub as well >
 token=< token  goes here, generated, you guessed it, from Automation Hub >
 
@@ -51,8 +51,12 @@ To shut down AAP so that you can come back tomorrow, run:
 To start up AAP and resume where you left off from yesterday, run:
 `ansible-playbook -i aws_ec2.yml -e @extra_vars.yml startup.yml`
 
-To run the teardown
+To teardown the instances, run:
 `ansible-playbook -i aws_ec2.yml -e @extra_vars.yml teardown.yml`
+> [!WARNING]
+> Remember to always run this when you are completely finished with
+> the environment, otherwise your certs will expire 
+> and you'll get tons of emails from Let's Encrypt about it.
 
 # To Do 
 - Create an update security rules playbook with the role
