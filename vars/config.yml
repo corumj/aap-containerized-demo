@@ -84,8 +84,14 @@ aap_infrastructure_aws:
 
 # Grab the offline token from the ansible.cfg you should have setup as part of the README.md (maybe, if 
 # I remembered to put that in there)
-#hub_offline_token: "{{ lookup('ini', 'token section=galaxy_server.automation_hub file=ansible.cfg') }}"
 
+# hub_offline_token: "{{ lookup('ini', 'token section=galaxy_server.automation_hub file=ansible.cfg') }}"
+
+# Because I might like to use jinja2 in my config files to customize them for
+# their current location in AWS/GCP/Whatever, I want to be able to use
+# the template module, this requires a little loop trickery in the playbook
+# and if you choose to copy the config somewhere else, you'll need to change this
+### I should fully parameterize this in the role as well #### 
 templates_destination: /home/ec2-user/aap/config
 templates_source: templates/config
 
