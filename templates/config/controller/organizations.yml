@@ -1,7 +1,13 @@
 ---
 controller_organizations:
 - name: Demo
-  description: This is the Default Group
+  description: Demo setup 
+  galaxy_credentials:
+    - "Automation Hub" 
+    - "Ansible Galaxy"
+
+- name: Windows
+  description: Demo setup 
   galaxy_credentials:
     - "Automation Hub" 
     - "Ansible Galaxy"
