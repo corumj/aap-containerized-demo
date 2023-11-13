@@ -17,12 +17,12 @@ controller_roles:
     role: member 
     organization: Windows
 
-  - team: Infrastructure 
+  - target_team: Infrastructure 
     organizations:  
       - Demo
       - Windows 
     role: admin
 
-  - team: "Windows Admins" 
+  - target_team: "Windows Admins" 
     organization: Windows 
     role: admin
