@@ -1,0 +1,14 @@
+--- 
+- name: Test loop over list with 2.14
+  hosts: controller 
+  gather_facts: no 
+  become: yes
+
+  vars_files:
+    adam_vars.yml
+
+  tasks:
+    - name: Install packages 
+      ansible.builtin.dnf:
+        name: "{{ dnf_packages }}"
+        state: present 
