@@ -9,6 +9,7 @@
     - "controller"
     - "hub"
     - "eda"
+  ignore_errors: True  
 
 - name: Remove certs 
   ansible.builtin.file:
