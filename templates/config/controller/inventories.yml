@@ -8,7 +8,15 @@ controller_inventories:
     organization: Windows
     description: created by Ansible Playbook - for Windows Systems teams
 
-
+controller_inventory_sources:
+  - name: Linux Systems
+    source: ec2
+    inventory: "Linux Systems"
+    credential: AWS
+    description: created by Ansible controller
+    overwrite: true
+    update_on_launch: true
+    update_cache_timeout: 0
 
 
 

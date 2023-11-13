@@ -1,4 +1,0 @@
---- 
-dnf_packages:
-  - git 
-  - nano

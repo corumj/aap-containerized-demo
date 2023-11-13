@@ -1,0 +1,8 @@
+---
+- name: Ansible Lightspeed Playbook
+  hosts: localhost
+
+  tasks:
+    
+
+

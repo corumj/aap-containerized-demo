@@ -47,7 +47,7 @@ controller_pg_password="{{ admin_password }}"
 # AAP Controller - optional
 # -------------------------
 # To use the postinstall feature you need to set these variables
-controller_postinstall=true
+controller_postinstall={{ post_install }}
 controller_license_file=/home/{{ ansible_user }}/aap/manifest.zip
 controller_postinstall_dir=/home/{{ ansible_user }}/aap/config
 controller_tls_cert=/home/{{ ansible_user }}/aap/generated_files/{{ controller_dns }}_chain 
