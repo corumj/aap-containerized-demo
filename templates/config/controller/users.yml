@@ -12,8 +12,26 @@ controller_user_accounts:
     email: gaverel.rocannon@example.com 
     organization: Demo 
 
+  - user: george
+    first_name: George 
+    last_name: Orr
+    email: george.orr@example.com 
+    organization: Demo 
+
   - user: genly
     first_name: Genly 
     last_name: Ai 
     email: genly.ai@example.com 
+    organization: Windows
+
+  - user: raj
+    first_name: Raj 
+    last_name: Lyubov 
+    email: raj.lyubov@example.com 
+    organization: Windows
+
+  - user: kaza
+    first_name: Kaza 
+    last_name: Agad 
+    email: kaza.agad@example.com 
     organization: Windows

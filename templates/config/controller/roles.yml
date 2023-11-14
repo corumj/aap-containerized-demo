@@ -3,9 +3,7 @@ controller_roles:
   - user: alvaro 
     target_team: Infrastructure
     role: member 
-    organizations: 
-      - Demo 
-      - Windows
+    organizations: Demo 
 
   - user: gaverel
     target_team: Infrastructure
@@ -18,11 +16,15 @@ controller_roles:
     organization: Windows
 
   - target_team: Infrastructure 
-    organizations:  
-      - Demo
-      - Windows 
+    organizations: Demo
     role: admin
 
-  - target_team: "Windows Admins" 
-    organization: Windows 
+  - user: george
+    target_team: "Windows Help Desk" 
+    organizations: Windows 
+    role: admin
+
+  - user: raj
+    target_team: "Networking" 
+    organizations: Demo 
     role: admin

@@ -4,20 +4,10 @@ controller_teams:
     description: SysAdmins 
     organization: Demo 
     state: present 
-    
-  - name: Infrastructure
-    description: SysAdmins 
-    organization: Windows 
-    state: present 
 
   - name: Networking
     description: Network Admin Team 
     organization: Demo 
-    state: present
-
-  - name: Networking
-    description: Network Admin Team 
-    organization: Windows 
     state: present
 
   - name: Windows Admins
