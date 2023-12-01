@@ -33,6 +33,10 @@ aap_infrastructure_aws:
       group: "eda"
       short_desc: "edacontroller"
       instance_type: "t2.large"
+    - name: "test-eebuilder-linux"
+      group: "eebuilder"
+      short_desc: "eebuilderbox"
+      instance_type: "t2.micro"
 
 # Defined AWS security group rules here.  These have evolved over time as I've 
 # added ports for various demos.
@@ -45,7 +49,9 @@ aap_infrastructure_aws:
         - 22 # SSH
         - 27199 # Ansible Default Receptor Port 
         - 9092 # Kafka default port
-        - 8200
+        - 8200 # splunk HEC port  
+        - 8000 # splunk demo 
+        - 8089 # splunk admin port for setting up HEC
       cidr_ip: 0.0.0.0/0
     - proto: icmp
       to_port: -1

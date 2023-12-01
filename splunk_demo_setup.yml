@@ -1,0 +1,35 @@
+--- 
+- name: Provision server for Splunk 
+  hosts: localhost
+  connection: local 
+
+  vars_files:
+    - config.yml 
+
+  tasks: 
+    - name: Provision server for splunk 
+      ansible.builtin.include_role:
+        name: splunk 
+        tasks_from: infra.yml 
+
+    - name: refresh dynamic inventory 
+      meta: refresh_inventory 
+
+- name: Install and Start Splunk 
+  hosts: splunk 
+  become: yes 
+
+  tasks:
+    - name: Install and start splunk 
+      ansible.builtin.include_role:
+        name: splunk 
+        tasks_from: install.yml
+
+    - name: Retrieve hec token information 
+      ansible.builtin.include_role:
+        name: splunk 
+        tasks_from: configure_hec.yml     
+
+
+    
+

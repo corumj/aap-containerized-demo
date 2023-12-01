@@ -1,0 +1,25 @@
+--- 
+- name: Retrieve token uuid from splunk 
+  ansible.builtin.uri: 
+    url: "https://{{ inventory_hostname }}:8089/services/data/inputs/http"
+    user: admin 
+    method: GET
+    body_format: json 
+    password: "{{ admin_password }}"
+    return_content: True 
+    validate_certs: False 
+  register: hec_token 
+
+- name: Save response as yaml  
+  set_fact: 
+    hec_yaml: "{{ hec_token.content | ansible.utils.from_xml }}"
+
+- name: extract token 
+  set_fact:  
+    token: "{{ (hec_yaml.feed.entry.content['s:dict']['s:key'] | last)['#text'] }}"
+
+- name: Print token 
+  debug:
+    var: token
+
+    ## To do - update Controller settings to send logs to splunk 

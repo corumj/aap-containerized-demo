@@ -11,3 +11,9 @@ controller_organizations:
   galaxy_credentials:
     - "Automation Hub" 
     - "Ansible Galaxy"
+
+- name: Linux
+  description: Linux Team 
+  galaxy_credentials:
+    - "Automation Hub" 
+    - "Ansible Galaxy"

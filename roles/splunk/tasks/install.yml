@@ -1,0 +1,40 @@
+--- 
+- name: Copy rpm installer 
+  ansible.builtin.copy:
+    src: "{{ splunk_rpm }}"
+    dest: /root/{{ splunk_rpm }}
+    mode: 0644 
+
+- name: Install Splunk 
+  ansible.builtin.yum:
+    name: /root/{{ splunk_rpm }}
+    state: present 
+    disable_gpg_check: True
+
+- name: Create admin cred config for splunk 
+  ansible.builtin.copy: 
+    content: |
+      [user_info]
+      USERNAME = admin 
+      PASSWORD = {{ admin_password }}
+    dest: /opt/splunk/etc/system/local/user-seed.conf
+
+- name: ensure /opt/splunk/etc/apps/splunk_httpinput/local/ exists 
+  ansible.builtin.file: 
+    path: /opt/splunk/etc/apps/splunk_httpinput/local 
+    state: directory 
+
+- name: Create HEC config and token for Controller link
+  ansible.builtin.copy: 
+    content: | 
+      [http]
+      disabled = 0
+      enableSSL = 0
+      port = 8200 
+      sourcetype = "_json"
+
+      [ansible]
+    dest: /opt/splunk/etc/apps/splunk_httpinput/local/inputs.conf
+
+- name: Start Splunk 
+  shell: /opt/splunk/bin/splunk start --accept-license --answer-yes

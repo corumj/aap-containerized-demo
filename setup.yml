@@ -233,7 +233,7 @@
         dest: "/home/{{ ansible_user }}/aap/inventory"
 
     - name: run the Automation Controller installer
-      shell: "ansible-playbook -i inventory ansible.containerized_installer.install --key-file '~/.ssh/controller_id_rsa'"
+      shell: "ansible-playbook -i inventory -e create_preload_data=False ansible.containerized_installer.install --key-file '~/.ssh/controller_id_rsa'"
       args:
         chdir: "/home/ec2-user/aap"
       async: 4800

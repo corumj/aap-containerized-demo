@@ -1,0 +1,12 @@
+--- 
+collections:
+  - name: awx.awx 
+    version: 22.4.0 
+  - name: community.crypto 
+    version: 2.5.0 
+  - name: community.general 
+    version: 5.5.0 
+  - name: community.aws 
+    version: 3.5.0 
+  - name: community.hashi_vault 
+    version: 3.3.1

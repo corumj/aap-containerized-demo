@@ -1,0 +1,9 @@
+---
+controller_templates:
+  - name: Create new OCP Project
+    job_type: run
+    inventory: Linux Systems
+    project: AAP Demos
+    playbook: ocp_new_project.yml
+    credentials:
+    - Demo Credential

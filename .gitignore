@@ -9,3 +9,4 @@ aap/*
 generated_files/*
 *.tar.gz 
 *.py
+splunk-*
