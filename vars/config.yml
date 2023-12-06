@@ -45,10 +45,6 @@ aap_infrastructure_aws:
       group: "eda"
       short_desc: "edacontroller"
       instance_type: "t2.large"
-    - name: "test-eebuilder-linux"
-      group: "eebuilder"
-      short_desc: "eebuilderbox"
-      instance_type: "t2.micro"
 
 # Defined AWS security group rules here.  These have evolved over time as I've 
 # added ports for various demos.
