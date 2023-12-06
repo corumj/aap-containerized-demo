@@ -32,3 +32,10 @@
       include_role: 
         name: certificates
         tasks_from: set-dns.yml
+
+    - name: Print access information
+      ansible.builtin.debug:
+        msg: 
+          - "Automation Controller: https://{{ controller_dns }} "
+          - "EDA Controller: https://{{ eda_dns }} "
+          - "Automation Hub: https://{{ hub_dns }} "
