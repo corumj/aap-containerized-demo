@@ -1,0 +1,34 @@
+--- 
+- name: Test/explain tags 
+  hosts: localhost 
+  gather_facts: no
+  tasks:
+    - name: Test tag with never and always 
+    # Always overrides never even if the order changes, will always run
+      debug: 
+        msg: "Never and always or always and never"
+      tags: 
+        - always 
+        - never 
+
+
+    - name: Test tag with never 
+    # Will never run unless a second tag is added or `--tags never`
+      debug: 
+        msg: "Never"
+      tags: 
+        - never 
+
+    - name: Test tag with start 
+    # Runs with `--tags start` as well as with no tags, but not with `--tags pizza` 
+      debug: 
+        msg: "Start"
+      tags: 
+        - start 
+
+    - name: Test tag with pizza 
+    # Runs with `--tags pizza` as well as with no tags, but not with `--tags start`
+      debug: 
+        msg: "Pizza"
+      tags: 
+        - pizza 
