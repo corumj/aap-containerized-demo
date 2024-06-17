@@ -1,0 +1,9 @@
+---
+- name: whatever this playbook
+  hosts: all 
+  vars:
+    pizza: pepperoni
+  
+  tasks:
+    - name: 
+    - name:
