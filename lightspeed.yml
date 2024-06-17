@@ -3,6 +3,13 @@
   hosts: localhost
 
   tasks:
+
+    # Install httpd & copy web.html to /var/www/html/index.html & ensure httpd is enabled and running
     
+
+    
+
+    
+
 
 

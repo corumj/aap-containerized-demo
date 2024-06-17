@@ -4,6 +4,10 @@
   connection: local 
   gather_facts: no 
 
+  module_defaults:
+    group/aws:
+      region: us-east-2
+
   vars_files:
     - config.yml 
 
@@ -68,6 +72,10 @@
   hosts: all 
   gather_facts: no 
 
+  module_defaults:
+    group/aws:
+      region: us-east-2
+
   tasks: 
     - name: wait for systems to become reachable 
       ansible.builtin.wait_for_connection:
@@ -130,6 +138,10 @@
   hosts: controller 
   gather_facts: no 
 
+  module_defaults:
+    group/aws:
+      region: us-east-2
+
   vars_files:
     - config.yml 
 
@@ -180,6 +192,10 @@
   hosts: aws_ec2:!controller
   gather_facts: no 
   
+  module_defaults:
+    group/aws:
+      region: us-east-2
+
   tasks:
     - name: Set authorized key taken from file
       ansible.posix.authorized_key:
@@ -192,6 +208,10 @@
   vars_files:
     - config.yml 
 
+  module_defaults:
+    group/aws:
+      region: us-east-2
+      
   tasks:
 
     - name: fetch dns info  
@@ -208,13 +228,13 @@
     - name: Copy installer 
       ansible.builtin.copy: 
         src: "{{ installer_file }}"
-        dest: ~/aap/aap.tar.gz 
+        dest: ~/aap/aap.tar.gz   
 
     - name: Copy ansible.cfg
       ansible.builtin.copy: 
         src: ansible.cfg 
         dest: ~/aap/ansible.cfg    
-
+        
     - name: Copy manifest.zip
       ansible.builtin.copy: 
         src: manifest.zip 
@@ -227,19 +247,39 @@
         extra_opts: ['--strip-components=1', '--show-stored-names']
         remote_src: yes 
 
+    - name: Copy ansible.cfg
+      ansible.builtin.copy: 
+        src: ansible.cfg 
+        dest: ~/aap/ansible.cfg  
+        
     - name: template inventory file for AAP install 
       ansible.builtin.template:
-        src: "inventory.j2"
+        src: "inventory.{{ demo_setup[demo] }}.j2"
         dest: "/home/{{ ansible_user }}/aap/inventory"
 
     - name: run the Automation Controller installer
-      shell: "ansible-playbook -i inventory -e create_preload_data=False ansible.containerized_installer.install --key-file '~/.ssh/controller_id_rsa'"
+      shell: "ansible-playbook -i inventory -e create_preload_data=False ansible.containerized_installer.install --key-file '/home/ec2-user/.ssh/controller_id_rsa'"
       args:
         chdir: "/home/ec2-user/aap"
       async: 4800
       poll: 60
       environment:
         ANSIBLE_COLLECTIONS_PATH: /home/{{ ansible_user }}/aap/collections
+
+    - name: Update AWS Linux Machine credential # for whatever reason, the infra.controller_configuration 
+      ansible.controller.credential:            # collection doesn't like the private key, so overwriting
+        state: present                          # it here to add the actual key.
+        name: AWS Linux 
+        description: AWS Linux Machine Credential 
+        organization: Linux 
+        credential_type: Machine 
+        inputs:
+          username: ec2-user
+          ssh_key_data: "{{ private_key }}"
+        controller_username: "admin"
+        controller_password: "{{ admin_password }}"
+        controller_host: "https://controller.{{ top_level_domain }}"
+        validate_certs: true
 
     - name: Print access information
       ansible.builtin.debug:
