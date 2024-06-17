@@ -4,7 +4,7 @@
   gather_facts: no
   tasks:
     - name: Test tag with never and always 
-    # Always overrides never even if the order changes, will always run
+    # 'always' overrides 'never' even if the order changes, will always run
       debug: 
         msg: "Never and always or always and never"
       tags: 

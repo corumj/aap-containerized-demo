@@ -1,0 +1,84 @@
+# This is the AAP installer inventory file
+# Please consult the docs if you're unsure what to add
+# For all optional variables please consult the included README.md
+
+# This section is for your AAP Controller host(s)
+# -------------------------------------------------
+[automationcontroller]
+{{ controller_dns }} ansible_connection=local
+
+# This section is for your AAP Automation Hub host(s)
+# -----------------------------------------------------
+[automationhub]
+{{ hub_dns }} 
+
+# This section is for your AAP EDA Controller host(s)
+# -----------------------------------------------------
+[automationeda]
+{{ eda_dns }} 
+
+# This section is for the AAP database(s)
+# -----------------------------------------
+# Uncomment the lines below and amend appropriately if you want AAP to install and manage the postgres databases
+# Leave commented out if you intend to use your own external database and just set appropriate _pg_hosts vars
+# see mandatory sections under each AAP component
+[database]
+{{ controller_dns }} ansible_connection=local
+
+[all:vars]
+
+# Common variables needed for installation
+# ----------------------------------------
+postgresql_admin_username=postgres
+postgresql_admin_password="{{ admin_password }}"
+# If using the online (non-bundled) installer, you need to set RHN registry credentials
+registry_username={{ redhat_username }}
+registry_password={{ redhat_password }}
+# If using the bundled installer, you need to alter defaults by using:
+#bundle_install=true
+#bundle_dir=<full path to the bundle directory>
+
+# AAP Controller - mandatory
+# --------------------------
+controller_admin_password="{{ admin_password }}"
+controller_pg_host={{ hostvars[groups['controller'][0]]['private_dns_name'] }}
+controller_pg_password="{{ admin_password }}"
+
+# AAP Controller - optional
+# -------------------------
+# To use the postinstall feature you need to set these variables
+controller_postinstall={{ post_install }}
+controller_license_file=/home/{{ ansible_user }}/aap/manifest.zip
+controller_postinstall_dir=/home/{{ ansible_user }}/aap/config
+controller_tls_cert=/home/{{ ansible_user }}/aap/generated_files/{{ controller_dns }}_chain 
+controller_tls_key=/home/{{ ansible_user }}/aap/generated_files/cert_key
+
+# AAP Automation Hub - mandatory
+# ------------------------------
+hub_admin_password="{{ admin_password }}"
+hub_pg_host={{ hostvars[groups['controller'][0]]['private_dns_name'] }}
+hub_pg_password="{{ admin_password }}"
+
+# AAP Automation Hub - optional
+# -----------------------------
+hub_main_url=https://{{ hub_dns }}
+hub_tls_cert=/home/{{ ansible_user }}/aap/generated_files/{{ hub_dns }}_chain
+hub_tls_key=/home/{{ ansible_user }}/aap/generated_files/cert_key
+
+
+# AAP EDA Controller - mandatory
+# ------------------------------
+eda_admin_password="{{ admin_password }}"
+eda_pg_host={{ hostvars[groups['controller'][0]]['private_dns_name'] }} 
+eda_pg_password="{{ admin_password }}"
+controller_main_url=https://{{ controller_dns }}
+
+
+# AAP EDA Controller - optional
+# -----------------------------
+eda_main_url=https://{{ eda_dns }}
+eda_tls_cert=/home/{{ ansible_user }}/aap/generated_files/{{ eda_dns }}_chain 
+eda_tls_key=/home/{{ ansible_user }}/aap/generated_files/cert_key
+
+# nginx - optional 
+nginx_https_port=443

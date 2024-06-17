@@ -1,0 +1,12 @@
+--- 
+- name: test 
+  hosts: localhost 
+
+  vars: 
+    galaxy_api_key: "{{ undef(hint='You must specify your Galaxy API key') }}"
+
+  tasks:
+
+  - name: debug
+    debug:
+      var: galaxy_api_key

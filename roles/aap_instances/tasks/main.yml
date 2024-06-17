@@ -38,7 +38,7 @@
   register: ec2_loop 
   async: 3000
   poll: 0
-  loop: "{{ aap_infrastructure_aws.instances }}"
+  loop: "{{ aap_infrastructure_aws[demo].instances }}"
 
 - name: Wait for provisioning to complete 
   ansible.builtin.async_status:

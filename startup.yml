@@ -17,7 +17,8 @@
         state: started
         filters:
           instance-state-name: stopped
-
+          tag:demo: Ansible
+          
     - name: wait for systems to become reachable 
       ansible.builtin.wait_for_connection:
         timeout: 900

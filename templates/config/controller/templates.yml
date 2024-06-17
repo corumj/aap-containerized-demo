@@ -7,3 +7,39 @@ controller_templates:
     playbook: ocp_new_project.yml
     credentials:
     - Demo Credential
+
+  - name: Create /etc/hosts file from inventory group
+    job_type: run
+    inventory: Linux Systems
+    project: AAP Demos
+    playbook: hosts_file_from_inv.yml
+    credentials:
+    - AWS Linux
+
+  - name: Workflow Example - Set variables with set_stats
+    job_type: run
+    inventory: Linux Systems
+    project: AAP Demos
+    playbook: stats_pb1.yml
+    credentials:
+    - AWS Linux
+
+  - name: Workflow Example - Get variables from set_stats
+    job_type: run
+    inventory: Linux Systems
+    project: AAP Demos
+    playbook: stats_pb2.yml
+    credentials:
+    - AWS Linux
+
+controller_workflows:
+  - name: Pass variables from one workflow template to another
+    organization: Linux 
+    simplified_workflow_nodes:
+      - identifier: setstats1
+        unified_job_template: "Workflow Example - Set variables with set_stats"
+        success_nodes:
+          - getstats2 
+
+      - identifier: getstats2 
+        unified_job_template: "Workflow Example - Get variables from set_stats"

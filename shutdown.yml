@@ -9,3 +9,4 @@
         state: stopped
         filters:
           instance-state-name: running
+          tag:demo: Ansible

@@ -42,11 +42,25 @@
     state: present
     vpc_id: "{{ demo_vpc.vpc.id }}"
     cidr: 10.0.0.0/16
+    az: us-east-2b
     map_public: yes
     tags:
       Name: "ansible-subnet"
       demo: Ansible 
   register: demo_subnet
+
+- name: Create a subnet on the VPC in a second availability zone
+  amazon.aws.ec2_vpc_subnet:
+    profile: "{{ aws_profile }}"
+    state: present
+    vpc_id: "{{ demo_vpc.vpc.id }}"
+    cidr: 10.0.0.0/16
+    az: us-east-2a
+    map_public: yes
+    tags:
+      Name: "ansible-subnet-2"
+      demo: Ansible 
+  register: demo_subnet2
 
 - name: Create a subnet route table 
   community.aws.ec2_vpc_route_table:
